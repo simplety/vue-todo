@@ -12,8 +12,7 @@ Vue.use(Router)
 
 const routes = [{
   path: '',
-  base: '/todo/',
-  redirect: '/login'
+  redirect: '/main'
 }, {
   path: '/login',
   component: SignUpAndLogIn,
@@ -24,7 +23,7 @@ const routes = [{
     { path: 'validate', component: ValidateEmail }
   ]
 }, {
-  path: '/todo',
+  path: '/main',
   component: Todo
 }, {
   path: '/error',
@@ -34,6 +33,6 @@ const routes = [{
 
 export default new Router({
   mode: 'history',
-  base: __dirname,
+  base: '/todo/',
   routes
 })

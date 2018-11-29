@@ -63,7 +63,7 @@ export default {
         this.tip = '请输入合法密码'
       } else {
         logIn(user, function () {
-          this.$router.replace('/todo')
+          this.$router.replace('/main')
         }.bind(this), function (err) {
           this.tip = errorHandler.code2message(err.message)
           this.userData.password = ''
