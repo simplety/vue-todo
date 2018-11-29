@@ -38,7 +38,9 @@ export default {
       type: Boolean
     },
     value: {
-      type: Date
+      validator: function (value) {
+        return value instanceof Date || value === null
+      }
     }
   },
   components: {

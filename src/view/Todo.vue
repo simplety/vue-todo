@@ -493,6 +493,7 @@ export default {
         display: flex;
         flex-wrap: nowrap;
         align-items: center;
+        margin-right: 15px;
         &:hover {
           background: #eee;
           transition: 0.3s all ease;
