@@ -3,24 +3,32 @@
     <div class="modal" :class="{active: editing.show}">
       <div class="todo-card">
         <div class="content-wrap">
-          <textarea class="content" v-model="editing.content" />
+          <textarea class="content" v-model="editing.content"/>
           <!-- @keyup="setValue(editing, 'content', $event.currentTarget.innerText)" /> -->
         </div>
         <div class="row">
           <div class="calendar-wrap">
-            <icon class="icon-calendar" name="calendar" @click.native="togglePanelShow(editing, 'showCalendar')"/>
-            <span>{{localExpOfDate(editing.deadline)}}</span>
+            <div class="button" @click="togglePanelShow(editing, 'showCalendar')">
+              <icon class="icon-calendar" name="calendar"/>
+              <span>{{localExpOfDate(editing.deadline)}}</span>
+            </div>
             <calendar :show.sync="editing.showCalendar" v-model="editing.deadline"/>
           </div>
-            <div class="starbar-wrap">
-              <icon class="icon-star" name="star" @click.native="togglePanelShow(editing, 'showStarBar')" :aria-label="'重要程度'"/>
-              <icon-select :show.sync="editing.showStarBar" v-model="editing.degree" class="bottom-right"/>
-              <star-bar :count = 'editing.degree' direction="left" max.number="5"/>
+          <div class="starbar-wrap">
+            <div class="button" @click="togglePanelShow(editing, 'showStarBar')">
+              <icon class="icon-star" name="star" :aria-label="'重要程度'"/>
+              <star-bar :count="editing.degree" direction="left" max.number="5"/>
+            </div>
+            <icon-select
+              :show.sync="editing.showStarBar"
+              v-model="editing.degree"
+              class="bottom-right"
+            />
           </div>
         </div>
         <div class="button-wrap">
           <a href="javascript: void(0);" class="confirm" @click="editDoneTodo">确定</a>
-          <a href="javascript: void(0);" class="cancel" @click="editing.show = false" >取消</a>
+          <a href="javascript: void(0);" class="cancel" @click="editing.show = false">取消</a>
         </div>
       </div>
     </div>
@@ -31,19 +39,37 @@
     </div>
     <div class="newTodo">
       <label>
-        <input type="text" v-model='newTodo.content' placeholder="type in..." @keypress.enter="addTodo">
+        <input
+          type="text"
+          v-model="newTodo.content"
+          placeholder="type in..."
+          @keypress.enter="addTodo"
+        >
         <icon name="enter" @click.native="addTodo"/>
         <div class="info">
-          <span class="deadline" :class="{active:newTodo.deadline != null}">{{localExpOfDate(newTodo.deadline)}}</span>
-          <star-bar :count = 'newTodo.degree' direction="left" max.number="5"/>
+          <span
+            class="deadline"
+            :class="{active:newTodo.deadline != null}"
+          >{{localExpOfDate(newTodo.deadline)}}</span>
+          <star-bar :count="newTodo.degree" direction="left" max.number="5"/>
         </div>
       </label>
       <div class="wrap">
-        <icon class="icon-calendar" name="calendar" @click.native="togglePanelShow(newTodo, 'showCalendar')" title="最后期限"/>
+        <icon
+          class="icon-calendar"
+          name="calendar"
+          @click.native="togglePanelShow(newTodo, 'showCalendar')"
+          title="最后期限"
+        />
         <calendar :show.sync="newTodo.showCalendar" v-model="newTodo.deadline"/>
       </div>
       <div class="wrap">
-        <icon class="icon-star" name="star" @click.native="togglePanelShow(newTodo, 'showStarBar')" title="'重要程度'"/>
+        <icon
+          class="icon-star"
+          name="star"
+          @click.native="togglePanelShow(newTodo, 'showStarBar')"
+          title="'重要程度'"
+        />
         <icon-select :show.sync="newTodo.showStarBar" v-model="newTodo.degree"/>
       </div>
     </div>
@@ -54,7 +80,7 @@
           <p :title="todo.content">{{todo.content}}</p>
           <div class="info">
             <span>{{localExpOfDate(todo.deadline)}}</span>
-            <star-bar :count = 'todo.degree' direction="left" max.number="5"/>
+            <star-bar :count="todo.degree" direction="left" max.number="5"/>
           </div>
           <icon class="icon-edit" name="edit" @click.native="editTodo(todo)"/>
           <icon class="icon-delete" name="delete" @click.native="removeTodo(todo)"/>
@@ -71,7 +97,7 @@ import Calendar from '../components/common/Calendar'
 import IconSelect from '../components/IconSelect'
 import Icon from '../components/common/Icon'
 import StarBar from '../components/common/starBar'
-import {logOut, getCurrentUser} from '../util/userUtil'
+import { logOut, getCurrentUser } from '../util/userUtil'
 
 export default {
   name: 'Todo',
@@ -85,7 +111,7 @@ export default {
     return {
       newTodo: {
         content: '',
-        deadline: null,
+        deadline: null,    // date
         degree: 1,
         showCalendar: false,
         showStarBar: false
@@ -123,8 +149,8 @@ export default {
       } else return ''
     },
     updateLocal: function (todoObj, index) {
-      let {content, deadline, degree, id} = todoObj
-      let item = {content, deadline, degree, id}
+      let { content, deadline, degree, id } = todoObj
+      let item = { content, deadline, degree, id }
       if (typeof index === 'number') {
         this.todoList.splice(index, 1, item)
       } else if (index === undefined) {
@@ -158,8 +184,8 @@ export default {
       }
     },
     editTodo: function (todoObj) {
-      let {content, deadline, degree, done, id} = todoObj
-      Object.assign(this.editing, {content, deadline, degree, done, id}, {index: this.todoList.indexOf(todoObj)})
+      let { content, deadline, degree, done, id } = todoObj
+      Object.assign(this.editing, { content, deadline, degree, done, id }, { index: this.todoList.indexOf(todoObj) })
       this.togglePanelShow(this.editing, 'show')
     },
     editDoneTodo: function () {
@@ -178,9 +204,10 @@ export default {
       }.bind(this))
     },
     logOut: function () {
+      var username = this.username
       logOut()
       this.curUser = null
-      this.$router.replace({name: 'login', params: {username: this.username}})
+      this.$router.replace({ name: 'login', params: { username } })
       window.sessionStorage.clear()
     },
     sessionHdler: function () {
@@ -188,18 +215,26 @@ export default {
         todoList: this.todoList,
         newTodo: this.newTodo
       })
-      window.sessionStorage.setItem('todo', dataString)
+      window.sessionStorage.setItem('todos', dataString)
     }
   },
   created: function () {
     window.addEventListener('beforeunload', this.sessionHdler.bind(this))
-    let oldData = JSON.parse(window.sessionStorage.getItem('todo')) || {}
+    let oldData = JSON.parse(window.sessionStorage.getItem('todos')) || {}
     this.curUser = getCurrentUser()
     if (!this.curUser) {
       this.$router.replace('/login')
     } else if (oldData.newTodo) {
-      this.todoList = oldData.todoList
+      // read data from sessionStorage
       this.newTodo = oldData.newTodo
+      // parse Date class attributes
+      this.newTodo.deadline = oldData.newTodo.deadline ? new Date(oldData.newTodo.deadline) : null
+      if (oldData.todoList.constructor === Array) {
+        this.todoList = oldData.todoList.map((todo) => {
+          todo.deadline = todo.deadline ? new Date(todo.deadline) : null
+          return todo
+        })
+      }
     } else {
       this.todoList = todoUtil.getTodosByUserObj(this.curUser) || []
     }
@@ -245,8 +280,8 @@ export default {
       left: 50%;
       top: 50%;
       transform: translate(-50%, -50%);
-      border-top: 0.5rem solid teal;
-      border-bottom: 0.2rem solid teal;
+      border-top: 0.5rem solid #379392;
+      border-bottom: 0.2rem solid #379392;
       padding: 1rem;
       > .content-wrap {
         width: 100%;
@@ -260,13 +295,13 @@ export default {
           background: #fff;
           text-align: left;
           flex-grow: 1;
-          margin-right: -.9375rem;
-          padding: .5rem;
+          margin-right: -0.9375rem;
+          padding: 0.5rem;
           overflow-y: scroll;
           border: none;
           outline: none;
           font-weight: light;
-          color: #333;
+          color: #555;
         }
       }
       > .row {
@@ -275,10 +310,30 @@ export default {
         align-items: center;
         padding-top: 1rem;
         position: relative;
-        > .calendar-wrap {
+        .button {
           display: flex;
           justify-content: flex-start;
           align-items: center;
+          opacity: 0.8;
+          cursor: pointer;
+          transition: all 0.1s ease-out;
+          &:hover {
+            opacity: 1;
+          }
+        }
+        > .calendar-wrap {
+          > .button {
+            > .icon-calendar {
+              width: 1.5rem;
+              height: 1.5rem;
+              margin-right: 0.5rem;
+              fill: #379392;
+            }
+            > span {
+              min-width: 5rem;
+              color: #444;
+            }
+          }
           > .calendar {
             position: absolute;
             left: 0;
@@ -286,20 +341,29 @@ export default {
             z-index: 100;
             width: 17rem;
           }
-          > .icon-calendar {
-            width: 1.5rem;
-            height: 1.5rem;
-            margin-right: 0.5rem;
-            fill: teal;
-          }
-          > span {
-            color: #666;
-          }
         }
         > .starbar-wrap {
           // position: relative;
-          display: flex;
-          align-items: center;
+          // display: flex;
+          // align-items: center;
+          // cursor: pointer;
+          // opacity: 0.8;
+          // transition: all 0.1s ease-out;
+          // &:hover {
+          //   opacity: 1;
+          // }
+          > .button {
+            > .star-bar {
+              width: 5rem;
+              fill: #555;
+            }
+            > .icon-star {
+              width: 1.5rem;
+              height: 1.5rem;
+              fill: #379392;
+              margin-right: 0.5rem;
+            }
+          }
           > .icon-select {
             width: 10rem;
             position: absolute;
@@ -307,22 +371,12 @@ export default {
             bottom: 100%;
             z-index: 100;
           }
-          > .icon-star {
-            width: 1.5rem;
-            height: 1.5rem;
-            fill: teal;
-            margin-right: .5rem;
-          }
-          > .star-bar {
-            width: 5rem;
-            fill: #666;
-          }
         }
         > a {
           width: 5rem;
           line-height: 1.5;
           background: red;
-          border-radius: .2rem;
+          border-radius: 0.2rem;
         }
       }
       > .button-wrap {
@@ -332,14 +386,19 @@ export default {
         > a {
           width: 5rem;
           line-height: 1.8;
-          border-radius: .2rem;
+          border-radius: 0.2rem;
+          transition: all 0.1s ease-out;
+          opacity: 0.8;
+          &:hover {
+            opacity: 1;
+          }
           &.confirm {
-            background: #E71D36;
+            background: #e71d36;
             color: #f1f1f1;
           }
           &.cancel {
-            background: #9DC8C8;
-            color: #555;
+            background: #9dc8c8;
+            color: #333;
           }
         }
       }
@@ -401,7 +460,7 @@ export default {
         width: 1.2rem;
         fill: #999;
         &:hover {
-          fill: teal;
+          fill: #379392;
         }
       }
       > .info {
@@ -430,15 +489,21 @@ export default {
     }
     > .wrap {
       position: relative;
+      &:hover {
+        >.icon {
+          opacity: 0.9t;
+          box-shadow: .0625rem .0625rem .1rem #bbb inset, -.0625rem -.0625rem .15rem #bbb;
+          cursor: pointer;
+        }
+      }
       > .icon {
         width: 3.125rem;
         height: 3.125rem;
         fill: #666;
         padding: 0.5rem;
-        &:hover {
-          fill: #30a9de;
-          cursor: pointer;
-        }
+        border-radius: 0.1rem;
+        box-shadow: 0 0 0 #bbb inset;
+        transition: all 0.2s ease-in;
       }
       > .calendar {
         position: absolute;
@@ -456,7 +521,7 @@ export default {
           height: 0;
           width: 0;
           border: 0.5rem solid transparent;
-          border-bottom: 0.5rem solid teal;
+          border-bottom: 0.5rem solid #379392;
           position: absolute;
           top: -1rem;
           right: 1rem;
@@ -544,6 +609,7 @@ export default {
           fill: #aaa;
           &:hover {
             fill: #ee2560;
+            cursor: pointer;
           }
         }
       }

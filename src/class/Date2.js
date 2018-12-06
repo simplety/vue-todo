@@ -25,7 +25,7 @@ export default class Date2 {
   get nextMonth () {
     let day = this.day()
     let month = this.month()
-    let nextMonth = this.month(month + 1).day(1)
+    let nextMonth = this.day(1).month(month + 1)
     if (day > nextMonth.monthEnding.day()) {
       return nextMonth.monthEnding
     } else {
@@ -35,7 +35,7 @@ export default class Date2 {
   get previousMonth () {
     let day = this.day()
     let month = this.month()
-    let previousMonth = this.month(month - 1).day(1)
+    let previousMonth = this.day(1).month(month - 1)
     if (day > previousMonth.monthEnding.day()) {
       return previousMonth.monthEnding
     } else {
@@ -46,7 +46,7 @@ export default class Date2 {
     return this.day(1)
   }
   get monthEnding () {
-    return this.month(this.month() + 1).day(0)
+    return this.day(1).month(this.month() + 1).day(0)
   }
   get clone () {
     return new Date2(this.date)

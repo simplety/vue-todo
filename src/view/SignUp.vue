@@ -5,7 +5,7 @@
   <form @submit.prevent="signUp">
     <div class="row">
       <login-input type="text" name="username" v-model="userData.username" placeholder="电子邮箱" 
-      autofocus="true" @focusout.native="checkUsernameTaken(userData.username)"/>
+      @focusout.native="checkUsernameTaken(userData.username)" v-focus/>
       <icon class="status" name="right" v-show="isFormattedUsername && isUsernameUntaken"/>
     </div>
     <div class="row">
@@ -102,6 +102,7 @@ export default {
   },
   created: function () {
     window.addEventListener('beforeunload', this.sessionHdler.bind(this))
+    // check if params passed by routing.
     if (this.username) {
       this.userData.username = this.username
     } else {

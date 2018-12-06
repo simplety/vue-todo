@@ -1,10 +1,21 @@
 <template>
-<label class="input" :class="{focus, error: !isFormatted}" 
-@focusin="focus = true" @focusout="focus = false" @input.once="init=true" autocomplete="true">
-  <icon :name="name"/>
-  <input :type="type" v-model="_value" :placeholder="placeholder"  :autofocus="autofocus" :autocomplete="autocomplete">
-  <icon name="clear" class="clear" @click.native="clearContent"/>
-</label>
+  <label
+    class="input"
+    :class="{focus, error: !isFormatted}"
+    @focusin="focus = true"
+    @focusout="focus = false"
+    @input.once="init=true"
+    autocomplete="true"
+  >
+    <icon :name="name"/>
+    <input
+      :type="type"
+      v-model="_value"
+      :placeholder="placeholder"
+      :autocomplete="autocomplete"
+    >
+    <icon name="clear" class="clear" @click.native="clearContent"/>
+  </label>
 </template>
 
 <script>
@@ -12,7 +23,7 @@ import { checkFormatted } from '../../util/userUtil.js'
 import Icon from './Icon'
 export default {
   name: 'cus-input',
-  props: ['name', 'type', 'placeholder', 'value', 'autofocus'],
+  props: ['name', 'type', 'placeholder', 'value'],
   components: {
     icon: Icon
   },
@@ -46,12 +57,19 @@ export default {
     }
   },
   methods: {
+    focusin: function () {
+      this.focus = true
+      console.log(this.focus)
+    },
+    focusout: function () {
+      this.focus = false
+      console.log(this.focus)
+    },
     clearContent: function () {
       this._value = ''
     }
   },
   created: function () {
-    this.focus = this.autofocus
   }
 }
 </script>
@@ -66,13 +84,22 @@ export default {
   align-items: center;
   background: #fff;
   border-radius: 0.5rem;
-  border: 0.0625rem solid #77aaad;
+  border: 0.0625rem solid #aaa;
+  // border: 0.0625rem solid #77aaad;
   color: #666;
   &.focus {
-    border: 0.0625rem solid #03a6ff;
+    border-color: #03a6ff;
+    // border: 0.0625rem solid #03a6ff;
+    > .icon {
+      fill: #03a6ff;
+    }
   }
   &.error {
-    border: 0.0625rem solid #ff4e50;
+    border-color: #ff4e50;
+    > .icon {
+      fill: #ff4e50;
+    }
+    // border: 0.0625rem solid #ff4e50;
   }
   .icon {
     display: inline-block;
@@ -89,8 +116,8 @@ export default {
     }
   }
   .icon.clear {
-    width: .75rem;
-    height: .75rem;
+    width: 0.75rem;
+    height: 0.75rem;
     fill: #aaa;
     // height: 1.875rem;
     padding: 0;
@@ -105,7 +132,7 @@ export default {
   input {
     font-size: 1rem;
     border: none;
-    border-left: 0.0625rem solid green;
+    border-left: 0.0625rem solid #aaa;
     padding-left: 0.625rem;
     flex-grow: 1;
     &.error {

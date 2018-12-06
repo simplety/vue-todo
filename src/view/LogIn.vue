@@ -4,8 +4,7 @@
   <div class="tip">{{tip}}</div>
   <form @submit.prevent="logIn">
     <div class="row">
-      <login-input type="text" name="username" v-model="userData.username" placeholder="电子邮箱" 
-      autofocus="true"/>
+      <login-input type="text" name="username" v-model="userData.username" placeholder="电子邮箱" v-focus/>
     </div>
     <div class="row">
       <login-input type="password" name="password" v-model="userData.password" placeholder="密码" @keypress.enter.native="logIn"/>
@@ -42,7 +41,8 @@ export default {
   methods: {
     goToSignUp: function () {
       let username = checkFormatted(this.userData.username, 'username') ? this.userData.username : null
-      this.$router.replace({name: 'signup', params: {username}})
+      this.$router.replace({name: 'signup'})
+      // this.$router.replace({name: 'signup', params: {username}})
     },
     goToFindPassword: async function () {
       let {username} = this.userData
@@ -76,6 +76,7 @@ export default {
   },
   created: function () {
     window.addEventListener('beforeunload', this.sessionHdler.bind(this))
+    // check if params passed by routing.
     if (this.username) {
       this.userData.username = this.username
     } else {

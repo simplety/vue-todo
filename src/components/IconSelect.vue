@@ -58,7 +58,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
 .icon-select {
-  border: 1px solid teal;
+  border: 1px solid #379392;
   border-radius: .5rem;
   padding: .5rem 1rem;
   background: #f1f1f1;
@@ -71,7 +71,7 @@ export default {
     height: 0;
     width: 0;
     border: .5rem solid transparent;
-    border-bottom: .5rem solid teal;
+    border-bottom: .5rem solid #379392;
     position: absolute;
     top: -1rem;
     right: 1rem;
@@ -93,7 +93,7 @@ export default {
     height: 0;
     width: 0;
     border: .5rem solid transparent;
-    border-top: .5rem solid teal;
+    border-top: .5rem solid #379392;
     position: absolute;
     bottom: -1rem;
     left: 1rem;
@@ -115,7 +115,7 @@ export default {
     height: 0;
     width: 0;
     border: .5rem solid transparent;
-    border-top: .5rem solid teal;
+    border-top: .5rem solid #379392;
     position: absolute;
     bottom: -1rem;
     right: 1rem;
@@ -147,9 +147,9 @@ export default {
   &:hover {
     cursor: pointer;
     >.icon {
-      fill: teal;
+      fill: #379392;
       &.star-active {
-        fill: teal;
+        fill: #379392;
       }
     }
   }

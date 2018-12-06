@@ -12,7 +12,7 @@ Vue.use(Router)
 
 const routes = [{
   path: '',
-  redirect: '/main'
+  component: Todo
 }, {
   path: '/login',
   component: SignUpAndLogIn,
@@ -30,7 +30,6 @@ const routes = [{
   name: 'error',
   component: ErrorPage
 }]
-
 export default new Router({
   mode: 'history',
   base: '/todo/',

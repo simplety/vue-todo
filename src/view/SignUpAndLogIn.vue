@@ -1,10 +1,10 @@
 <template>
-<div id="SignUpAndLogIn">
-  <h2 class="title" v-if="curUser == null">记录每日事项⧸⎩⎠⎞͏(・∀・)⎛͏⎝⎭⧹</h2>
-  <div class="main">
-    <router-view></router-view>
+  <div id="SignUpAndLogIn">
+    <h2 class="title" v-if="curUser == null">记录每日事项⧸⎩⎠⎞͏(・∀・)⎛͏⎝⎭⧹</h2>
+    <div class="main">
+      <router-view></router-view>
+    </div>
   </div>
-</div>
 </template>
 
 <script>
@@ -86,18 +86,22 @@ export default {
           line-height: 1.875rem;
           margin-top: 1rem;
           margin-bottom: 1rem;
-          background: #d8e9ef;
+          background: rgba(216,233,239, 0.8);
           border-radius: 0.5rem;
           color: #3a5134;
+          &:hover {
+            background:rgba(216,233,239,1);
+          }
         }
         > .footer {
           display: flex;
           overflow: hidden;
           > a {
             margin-top: 0.5rem;
-            color: #2b90d9;
+            color: #0080ff;
+            opacity: 0.8;
             &:hover {
-              color: #0080ff;
+              opacity: 1;
             }
           }
         }
