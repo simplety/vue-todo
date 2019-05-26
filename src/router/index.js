@@ -30,8 +30,11 @@ const routes = [{
   name: 'error',
   component: ErrorPage
 }]
-export default new Router({
+
+const router = new Router({
   mode: 'history',
   base: '/todo/',
   routes
 })
+
+export default router

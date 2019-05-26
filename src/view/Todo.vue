@@ -209,39 +209,60 @@ export default {
       this.curUser = null
       this.$router.replace({ name: 'login', params: { username } })
       window.sessionStorage.clear()
-    },
-    sessionHdler: function () {
-      let dataString = JSON.stringify({
-        todoList: this.todoList,
-        newTodo: this.newTodo
-      })
-      window.sessionStorage.setItem('todos', dataString)
     }
+    // sessionHdler: function () {
+    //   let dataString = JSON.stringify({
+    //     todoList: this.todoList,
+    //     newTodo: this.newTodo
+    //   })
+    //   window.sessionStorage.setItem('todos', dataString)
+    // }
   },
   created: function () {
-    window.addEventListener('beforeunload', this.sessionHdler.bind(this))
-    let oldData = JSON.parse(window.sessionStorage.getItem('todos')) || {}
+    window.addEventListener('beforeunload', () => {
+      window.sessionStorage.setItem('newTodo', JSON.stringify(this.newTodo))
+    })
     this.curUser = getCurrentUser()
+    let newTodo = JSON.parse(window.sessionStorage.getItem('newTodo'))
     if (!this.curUser) {
       this.$router.replace('/login')
-    } else if (oldData.newTodo) {
-      // read data from sessionStorage
-      this.newTodo = oldData.newTodo
-      // parse Date class attributes
-      this.newTodo.deadline = oldData.newTodo.deadline ? new Date(oldData.newTodo.deadline) : null
-      if (oldData.todoList.constructor === Array) {
-        this.todoList = oldData.todoList.map((todo) => {
-          todo.deadline = todo.deadline ? new Date(todo.deadline) : null
-          return todo
-        })
-      }
-    } else {
-      this.todoList = todoUtil.getTodosByUserObj(this.curUser) || []
     }
+    console.log('?? 跳转以后')
+    if (newTodo) {
+      this.newTodo = newTodo
+      this.newTodo.deadline = newTodo.deadline ? new Date(newTodo.deadline) : null
+    }
+    this.todoList = todoUtil.getTodosByUserObj(this.curUser) || []
   },
   destroyed: function () {
-    window.removeEventListener('beforeunload', this.sessionHdler.bind(this))
+    window.removeListener('beforeunload', () => {
+      window.sessionStorage.setItem('newTodo', this.newTodo)
+    })
   }
+  // created: function () {
+  //   window.addEventListener('beforeunload', this.sessionHdler.bind(this))
+  //   let oldData = JSON.parse(window.sessionStorage.getItem('todos')) || {}
+  //   this.curUser = getCurrentUser()
+  //   if (!this.curUser) {
+  //     this.$router.replace('/login')
+  //   } else if (oldData.newTodo) {
+  //     // read data from sessionStorage
+  //     this.newTodo = oldData.newTodo
+  //     // parse Date class attributes
+  //     this.newTodo.deadline = oldData.newTodo.deadline ? new Date(oldData.newTodo.deadline) : null
+  //     if (oldData.todoList.constructor === Array) {
+  //       this.todoList = oldData.todoList.map((todo) => {
+  //         todo.deadline = todo.deadline ? new Date(todo.deadline) : null
+  //         return todo
+  //       })
+  //     }
+  //   } else {
+  //     this.todoList = todoUtil.getTodosByUserObj(this.curUser) || []
+  //   }
+  // },
+  // destroyed: function () {
+  //   window.removeEventListener('beforeunload', this.sessionHdler.bind(this))
+  // }
 }
 </script>
 
