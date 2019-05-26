@@ -33,9 +33,9 @@
       </div>
     </div>
     <div class="userinfo">
-      <icon class="icon-user" name="user"/>
+      <icon name="user"/>
       <span>{{username||''}}</span>
-      <icon class="icon-user" name="logout" @click.native="logOut"/>
+      <icon name="logout" @click.native="logOut"/>
     </div>
     <div class="newTodo">
       <label>
@@ -74,8 +74,20 @@
       </div>
     </div>
     <div class="wrap">
+      <div class="sort-wrap">
+        <icon name="sort"/>
+        <div class="sort-button">
+         <a href="javascript:void(0);" v-for="(type, num) in sort.typeList" :key="num" 
+         @click="switchSortType(num)" :class="{active: num===sort.type}">{{type}}</a>
+          <!-- <a href="javascript:void(0);" @click="switchSortType(0)" :active="">sort.typeList</a>
+          <a href="javascript:void(0);" @click="switchSortType(1)">deadline</a>
+          <a href="javascript:void(0);" @click="switchSortType(2)">importance</a>
+          <a href="javascript:void(0);" @click="switchSortType(3)">completeness</a> -->
+        </div>
+      </div>
+
       <ul class="todos">
-        <li v-for="(todo,i) in todoList" :key="i">
+        <li v-for="(todo,i) in sortedTodos" :key="i">
           <input type="checkbox" v-model="todo.done" @change="updateTodo(todo)">
           <p :title="todo.content">{{todo.content}}</p>
           <div class="info">
@@ -124,6 +136,11 @@ export default {
         showCalendar: false,
         showStarBar: false
       },
+      sort: {
+        typeList: ['createdAt', 'deadline', 'degree', 'done'],
+        type: 0,
+        order: 1
+      },
       todoList: [],
       doneList: [],
       curUser: null
@@ -134,6 +151,20 @@ export default {
       if (this.curUser && this.curUser.username) {
         return this.curUser.username
       } else return ''
+    },
+    sortedTodos: function () {
+      console.log(this.todoList)
+      let { typeList, type, order } = this.sort
+      let sortedArr = this.todoList.concat()
+      if (!type) return sortedArr
+      if (sortedArr.length < 2) return sortedArr
+      sortedArr.sort((a, b) => {
+        return a[typeList[type]] - b[typeList[type]]
+      })
+      if (order === -1) {
+        sortedArr.reverse()
+      }
+      return sortedArr
     }
   },
   methods: {
@@ -209,6 +240,21 @@ export default {
       this.curUser = null
       this.$router.replace({ name: 'login', params: { username } })
       window.sessionStorage.clear()
+    },
+    switchSortType: function (newType) {
+      if (typeof (newType) === 'string') {
+        newType = this.sort.typeList.indexOf(newType)
+        if (newType !== -1) this.sort.type = newType
+      } else if (typeof (newType) === 'number') {
+        if ((newType >= 0) && (newType < this.sort.typeList.length)) {
+          this.sort.type = newType
+        }
+      }
+    },
+    toggleSortOrder: function (order) {
+      if (order === 1 || order === -1) {
+        this.sort.order = order
+      }
     }
     // sessionHdler: function () {
     //   let dataString = JSON.stringify({
@@ -220,23 +266,31 @@ export default {
   },
   created: function () {
     window.addEventListener('beforeunload', () => {
-      window.sessionStorage.setItem('newTodo', JSON.stringify(this.newTodo))
+      let {content, deadline, degree} = this.newTodo
+      window.sessionStorage.setItem('newTodo', JSON.stringify({content, deadline, degree}))
     })
     this.curUser = getCurrentUser()
     let newTodo = JSON.parse(window.sessionStorage.getItem('newTodo'))
-    if (!this.curUser) {
-      this.$router.replace('/login')
-    }
-    console.log('?? 跳转以后')
     if (newTodo) {
-      this.newTodo = newTodo
-      this.newTodo.deadline = newTodo.deadline ? new Date(newTodo.deadline) : null
+      let {content, deadline, degree} = newTodo
+      this.newTodo.content = content
+      this.newTodo.deadline = deadline ? new Date(deadline) : null
+      this.newTodo.degree = degree
     }
     this.todoList = todoUtil.getTodosByUserObj(this.curUser) || []
+    // if (!this.curUser) {
+    //   this.$router.replace('/login')
+    // } else {
+    //   if (newTodo) {
+    //     this.newTodo = newTodo
+    //     this.newTodo.deadline = newTodo.deadline ? new Date(newTodo.deadline) : null
+    //   }
+    //   this.todoList = todoUtil.getTodosByUserObj(this.curUser) || []
+    // }
   },
   destroyed: function () {
-    window.removeListener('beforeunload', () => {
-      window.sessionStorage.setItem('newTodo', this.newTodo)
+    window.removeEventListener('beforeunload', () => {
+      window.sessionStorage.setItem('newTodo', JSON.stringify(this.newTodo))
     })
   }
   // created: function () {
@@ -434,12 +488,15 @@ export default {
     align-items: flex-end;
     border-bottom: 0.125rem solid #9baec8;
     > .icon-user {
-      display: inline-block;
-      width: 2.8125rem;
-      height: 2.8125rem;
-      fill: #6d819c;
-      vertical-align: -0.15em;
-      overflow: hidden;
+      // display: inline-block;
+      // width: 2.8125rem;
+      // height: 2.8125rem;
+      // fill: #6d819c;
+      // vertical-align: -0.15em;
+      // overflow: hidden;
+      width: 2rem;
+      height: 2rem;
+      margin: 0 0.5rem;
     }
     > span {
       flex-grow: 1;
@@ -448,10 +505,11 @@ export default {
     > .icon-logout {
       width: 1.75rem;
       height: 1.75rem;
-      fill: #6d819c;
+      // margin-right: .5rem;
+      fill: #999;
       overflow: hidden;
       &:hover {
-        fill: #333;
+        fill: #379392;
         cursor: pointer;
       }
     }
@@ -511,20 +569,23 @@ export default {
     > .wrap {
       position: relative;
       &:hover {
-        >.icon {
-          opacity: 0.9t;
-          box-shadow: .0625rem .0625rem .1rem #bbb inset, -.0625rem -.0625rem .15rem #bbb;
+        > .icon {
+          fill-opacity: 0.9;
+          background: #f1f1f1;
+          // box-shadow: 0.0625rem 0.0625rem .0625rem #bbb inset, -0.0625rem -0.0625rem .0625rem #bbb;
+          fill: #3b8686;
           cursor: pointer;
         }
       }
       > .icon {
         width: 3.125rem;
         height: 3.125rem;
-        fill: #666;
+        fill: #52616a;
         padding: 0.5rem;
         border-radius: 0.1rem;
-        box-shadow: 0 0 0 #bbb inset;
+        // box-shadow: 0 0 0 #bbb inset;
         transition: all 0.2s ease-in;
+        margin-right: .5rem;
       }
       > .calendar {
         position: absolute;
@@ -566,6 +627,40 @@ export default {
     margin-top: 1rem;
     width: 100%;
     height: 80%;
+    > .sort-wrap{
+      display: flex;
+      margin: 0 .5rem .25rem .5rem;
+      >.icon-sort {
+        margin-right: 1rem;
+        fill: grey;
+      }
+      >.sort-button{
+        display: flex;
+        height: 1.25rem;
+        flex-grow: 1;
+        justify-content: space-around;
+        >a {
+          font-size: 14px;
+          line-height: 1.25rem;
+          flex-grow: 1;
+          color: #333;
+          background: rgba(200,200,200,0.3);
+          border-right: .0625rem #fff solid;
+          &:first-child {
+            border-radius: .5rem 0 0 .5rem;
+          }
+          &:last-child {
+            border-radius: 0 .5rem .5rem 0;
+          }
+          &:hover {
+            background: rgba(200,200,200,.6);
+          }
+          &.active {
+            background: rgba(200,200,200,.9);
+          }
+        }
+      }
+    }
     > .todos {
       overflow-x: hidden;
       overflow-y: scroll;

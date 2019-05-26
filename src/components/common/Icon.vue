@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { checkFormatted } from '../../util/userUtil.js'
+// import { checkFormatted } from '../../util/userUtil.js'
 
 export default {
   name: 'icon',

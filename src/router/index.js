@@ -7,6 +7,8 @@ import LogIn from '../view/LogIn'
 import FindPassword from '../view/FindPassword'
 import ValidateEmail from '../view/ValidateEmail'
 import ErrorPage from '../view/ErrorPage'
+import { getCurrentUser } from '../util/userUtil'
+import { get } from 'http'
 
 Vue.use(Router)
 
@@ -37,4 +39,14 @@ const router = new Router({
   routes
 })
 
+router.beforeEach((to, from, next) => {
+  if (to.path === '/' || to.path === '/main') {
+    if (getCurrentUser()) {
+      next()
+    } else {
+      router.replace('/login')
+    }
+  }
+  next()
+})
 export default router

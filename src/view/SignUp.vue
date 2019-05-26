@@ -119,6 +119,7 @@ export default {
 <style lang="scss" scoped>
 .status {
   height: 3.125rem;
+  fill: #5CAB7D;
 }
 .footer {
   justify-content: center;

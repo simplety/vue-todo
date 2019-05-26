@@ -71,6 +71,5 @@ export function getTodosByUserObj (userObj) {
   }).catch(err => {
     console.log(err)
   })
-  console.log(todoList)
   return todoList
 }
